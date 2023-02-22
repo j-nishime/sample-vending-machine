@@ -8,6 +8,11 @@
 composer install
 ```
 
+composerが入ってない方はプロジェクト直下で下記Docker利用したコマンドを実行
+```shell
+docker run --rm --interactive --tty --volume $PWD:/app composer install
+```
+
 ## 課題
 
 ### 1. もっとも通常のパターン
