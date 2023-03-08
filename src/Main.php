@@ -39,7 +39,7 @@ class Main
         return $money;
     }
 
-    public static function getChangeCoins(int $change): array {
+    public static function getChangeCoins(int $change, array $vendingMachineCoins = []): array {
         if ($change === 0) {
             return [];
         }
@@ -48,9 +48,14 @@ class Main
         foreach($defaultCoins as $coin){
             $res = $change / $coin;
             $amount = floor($res);
-            $changeCoins[$coin] = $amount;
-            $change = $change - ($coin * $amount);
+            if (!empty($vendingMachineCoins) && $vendingMachineCoins[$coin] - $amount < 0) {
+                $changeCoins[$coin] = 0;
+            } else {
+                $changeCoins[$coin] = $amount;
+                $change = $change - ($coin * $amount);
+            }
         }
+        print_r($changeCoins);
         return $changeCoins;
     }
 
@@ -91,6 +96,7 @@ class Main
         $price = $menu[$order];
         $money = self::getTotalMoney($coins);
         $change = $money - $price;
-        return self::getChangeToString($change);
+        $changeCoins = self::getChangeCoins($change, $vendingMachineCoins);
+        return self::getChangeToString($changeCoins);
     }
 }
