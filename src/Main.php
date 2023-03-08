@@ -27,7 +27,8 @@ class Main
         $price = $menu[$order];
         $money = self::getTotalMoney($coins);
         $change = $money - $price;
-        return self::getChangeToString($change);
+        $changeCoins = self::getChangeCoins($change);
+        return self::getChangeToString($changeCoins);
     }
 
     public static function getTotalMoney(array $coins): int {
@@ -38,22 +39,33 @@ class Main
         return $money;
     }
 
-    public static function getChangeToString(int $change): string {
+    public static function getChangeCoins(int $change): array {
         if ($change === 0) {
-            return "nochange";
+            return [];
         }
-        $changeCoins = array(500, 100, 50, 10);
-        $changeToString = "";
-        foreach($changeCoins as $coin){
+        $defaultCoins = array(500, 100, 50, 10);
+        $changeCoins = [];
+        foreach($defaultCoins as $coin){
             $res = $change / $coin;
             $amount = floor($res);
+            $changeCoins[$coin] = $amount;
+            $change = $change - ($coin * $amount);
+        }
+        return $changeCoins;
+    }
+
+    public static function getChangeToString(array $changeCoins): string {
+        $changeToString = "";
+        foreach($changeCoins as $coin => $amount){
             if ($amount > 0) {
                 if ($changeToString !== ""){
                     $changeToString .= " ";
                 }
                 $changeToString .= "{$coin} {$amount}";
-                $change = $change - ($coin * $amount);
             }
+        }
+        if ($changeToString === "") {
+            return "nochange";
         }
         return $changeToString;
     }
@@ -69,6 +81,16 @@ class Main
      */
     public static function run(array $vendingMachineCoins, array $userInput): string
     {
-        return "do implementation";
+        $coins = $userInput['coins'];
+        $order = $userInput['menu'];
+        $menu = array(
+            'cola' => 120,
+            'coffee' => 150,
+            'energy_drink' => 210
+        );
+        $price = $menu[$order];
+        $money = self::getTotalMoney($coins);
+        $change = $money - $price;
+        return self::getChangeToString($change);
     }
 }
