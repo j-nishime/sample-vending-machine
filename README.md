@@ -19,7 +19,7 @@ docker run --rm --interactive --tty --volume $PWD:/app composer install
 
 ```shell
 # 確認コマンド
-composer test-round1
+docker run --rm --interactive --tty --volume $PWD:/app composer test-round1
 ```
 
 次の条件が通るように、`runSimply`を修正。
@@ -59,7 +59,7 @@ echo($change); // "50 1 10 3" (50円が1枚、10円が3枚)
 
 ```shell
 # 確認コマンド
-composer test-round2
+docker run --rm --interactive --tty --volume $PWD:/app composer test-round2
 ```
 
 次の条件が通るように、`run`を修正。

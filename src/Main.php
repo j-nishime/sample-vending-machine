@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+require_once(realpath(dirname(__FILE__).'/Domain/VendingMachine.php'));
+use Domain\VendingMachine;
 
 /**
  * メインクラス。
@@ -12,51 +14,24 @@ class Main
      * 処理の開始地点
      *
      * @param array $coins 投入額
-     * @param string $order 注文
+     * @param string $menu 注文メニュー
      * @return string おつり。大きな硬貨順に枚数を並べる。なしの場合はnochange
      * ex.)
      * - 100円3枚、50円1枚、10円3枚なら"100 3 50 1 10 3"
      */
-    public static function runSimply(array $coins, string $order): string
+    public static function runSimply(array $coins, string $menu): string
     {
-        $menu = array(
-            'cola' => 120,
-            'coffee' => 150,
-            'energy_drink' => 210
-        );
-        $price = $menu[$order];
-        $money = self::getTotalMoney($coins);
-        $change = $money - $price;
-        $changeCoins = self::getChangeCoins($change);
-        return self::getChangeToString($changeCoins);
-    }
-
-    public static function getTotalMoney(array $coins): int {
-        $money = 0;
-        foreach($coins as $coin => $amount) {
-            $money += intval($coin) * $amount;
-        }
-        return $money;
-    }
-
-    public static function getChangeCoins(int $change, array $vendingMachineCoins = []): array {
-        if ($change === 0) {
-            return [];
-        }
-        $defaultCoins = array(500, 100, 50, 10);
-        $changeCoins = [];
-        foreach($defaultCoins as $coin){
-            $res = $change / $coin;
-            $amount = floor($res);
-            if (!empty($vendingMachineCoins) && $vendingMachineCoins[$coin] - $amount < 0) {
-                $changeCoins[$coin] = 0;
-            } else {
-                $changeCoins[$coin] = $amount;
-                $change = $change - ($coin * $amount);
-            }
-        }
-        print_r($changeCoins);
-        return $changeCoins;
+        $vendingMachineCoins = [
+            '500' => 999,
+            '100' => 999,
+            '50' => 999,
+            '10' => 999,
+        ];
+        $vendingMachine = new VendingMachine($vendingMachineCoins);
+        $vendingMachine->receiveCoin($coins);
+        $vendingMachine->selectMenu($menu);
+        $change = $vendingMachine->returnChange();
+        return self::getChangeToString($change);
     }
 
     public static function getChangeToString(array $changeCoins): string {
@@ -86,17 +61,10 @@ class Main
      */
     public static function run(array $vendingMachineCoins, array $userInput): string
     {
-        $coins = $userInput['coins'];
-        $order = $userInput['menu'];
-        $menu = array(
-            'cola' => 120,
-            'coffee' => 150,
-            'energy_drink' => 210
-        );
-        $price = $menu[$order];
-        $money = self::getTotalMoney($coins);
-        $change = $money - $price;
-        $changeCoins = self::getChangeCoins($change, $vendingMachineCoins);
-        return self::getChangeToString($changeCoins);
+        $vendingMachine = new VendingMachine($vendingMachineCoins);
+        $vendingMachine->receiveCoin($userInput['coins']);
+        $vendingMachine->selectMenu($userInput['menu']);
+        $change = $vendingMachine->returnChange();
+        return self::getChangeToString($change);
     }
 }
