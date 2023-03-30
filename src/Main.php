@@ -45,9 +45,11 @@ class Main
      */
     public static function run(array $vendingMachineCoins, array $userInput): string
     {
+        $coins = $userInput['coins'];
+        $menu = $userInput['menu'];
         $vendingMachine = new VendingMachine($vendingMachineCoins);
-        $vendingMachine->receiveCoin($userInput['coins']);
-        $vendingMachine->selectMenu($userInput['menu']);
+        $vendingMachine->receiveCoin($coins);
+        $vendingMachine->selectMenu($menu);
         $change = $vendingMachine->returnChange();
         return $change->toString();
     }

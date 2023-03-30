@@ -25,7 +25,6 @@ class VendingMachine
      */
     public function receiveCoin(array $coins): void
     {
-        $keys = array_keys($coins);
         $total = 0;
         foreach ($coins as $coin => $amount) {
             $total += (int) $coin * $amount;
@@ -61,21 +60,20 @@ class VendingMachine
         if ($change === 0) {
             return [];
         }
-        $defaultCoins = array(500, 100, 50, 10);
         $changeCoins = [];
-        foreach($defaultCoins as $coin){
-            $res = $change / $coin;
-            $amount = floor($res);
-            $key = (String) $coin;
-            $ownCoin = $this->ownCoins[$key] - $amount;
+        foreach($this->ownCoins as $coin => $ownCoinAmount){
+            $coinNum = (int) $coin;
+            $res = $change / $coinNum;
+            $changeAmount = floor($res);
+            $ownCoin = $ownCoinAmount - $changeAmount;
             $hasCoin = $ownCoin > 0;
             if (!$hasCoin) {
                 // 釣り銭がない時はターゲットの硬貨は0枚にする
                 $changeCoins[$coin] = 0;
             } else {
                 // 釣り銭がある時は返せるだけ返して差し引いたお釣りを次のループで計算する
-                $changeCoins[$coin] = $amount;
-                $change = $change - ($coin * $amount);
+                $changeCoins[$coin] = $changeAmount;
+                $change = $change - ($coinNum * $changeAmount);
             }
         }
         return $changeCoins;
