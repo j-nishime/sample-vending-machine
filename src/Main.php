@@ -1,8 +1,8 @@
 <?php
 
 declare(strict_types=1);
-require_once(realpath(dirname(__FILE__).'/Domain/VendingMachine.php'));
-use Domain\VendingMachine;
+require(realpath(dirname(__FILE__).'/../vendor/autoload.php'));
+use App\Domain\VendingMachine;
 
 /**
  * メインクラス。
@@ -31,23 +31,7 @@ class Main
         $vendingMachine->receiveCoin($coins);
         $vendingMachine->selectMenu($menu);
         $change = $vendingMachine->returnChange();
-        return self::getChangeToString($change);
-    }
-
-    public static function getChangeToString(array $changeCoins): string {
-        $changeToString = "";
-        foreach($changeCoins as $coin => $amount){
-            if ($amount > 0) {
-                if ($changeToString !== ""){
-                    $changeToString .= " ";
-                }
-                $changeToString .= "{$coin} {$amount}";
-            }
-        }
-        if ($changeToString === "") {
-            return "nochange";
-        }
-        return $changeToString;
+        return $change->toString();
     }
 
     /**
@@ -65,6 +49,6 @@ class Main
         $vendingMachine->receiveCoin($userInput['coins']);
         $vendingMachine->selectMenu($userInput['menu']);
         $change = $vendingMachine->returnChange();
-        return self::getChangeToString($change);
+        return $change->toString();
     }
 }

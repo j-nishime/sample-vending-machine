@@ -1,6 +1,10 @@
 <?php
 
-namespace Domain;
+namespace App\Domain;
+
+require_once(realpath(dirname(__FILE__).'/../../vendor/autoload.php'));
+
+use App\Domain\Change;
 
 class VendingMachine
 {
@@ -38,13 +42,14 @@ class VendingMachine
     }
 
     /**
-     * @return array
+     * @return Change
      */
-    public function returnChange(): array
+    public function returnChange(): Change
     {
         $price = $this->menu[$this->selectedMenu];
         $change = $this->payment - $price;
-        return $this->getChangeToCoins($change);
+        $changeCoins = $this->getChangeToCoins($change);
+        return new Change($changeCoins);
     }
 
     /**
