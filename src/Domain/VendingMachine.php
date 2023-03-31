@@ -9,6 +9,7 @@ use App\Domain\Change;
 class VendingMachine
 {
     private int $payment;
+    private Change $change;
     private string $selectedMenu;
     private array $menu = [
         'cola' => 120,
@@ -38,6 +39,18 @@ class VendingMachine
     public function selectMenu(string $menu): void
     {
         $this->selectedMenu = $menu;
+        $this->calculatePayment();
+    }
+
+    /**
+     * @return void
+     */
+    private function calculatePayment(): void
+    {
+        $price = $this->menu[$this->selectedMenu];
+        $change = $this->payment - $price;
+        $changeCoins = $this->getChangeToCoins($change);
+        $this->change = new Change($changeCoins);
     }
 
     /**
@@ -45,10 +58,7 @@ class VendingMachine
      */
     public function returnChange(): Change
     {
-        $price = $this->menu[$this->selectedMenu];
-        $change = $this->payment - $price;
-        $changeCoins = $this->getChangeToCoins($change);
-        return new Change($changeCoins);
+        return $this->change;
     }
 
     /**
