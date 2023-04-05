@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 require(realpath(dirname(__FILE__).'/../vendor/autoload.php'));
-use App\Domain\VendingMachine;
+use App\UseCase\BuyDrinkUseCase;
 
 /**
  * メインクラス。
@@ -21,17 +21,8 @@ class Main
      */
     public static function runSimply(array $coins, string $menu): string
     {
-        $vendingMachineCoins = [
-            '500' => 999,
-            '100' => 999,
-            '50' => 999,
-            '10' => 999,
-        ];
-        $vendingMachine = new VendingMachine($vendingMachineCoins);
-        $vendingMachine->receiveCoin($coins);
-        $vendingMachine->selectMenu($menu);
-        $change = $vendingMachine->returnChange();
-        return $change->toString();
+        $useCase = new BuyDrinkUseCase;
+        return $useCase->execute($coins, $menu);
     }
 
     /**
@@ -47,10 +38,7 @@ class Main
     {
         $coins = $userInput['coins'];
         $menu = $userInput['menu'];
-        $vendingMachine = new VendingMachine($vendingMachineCoins);
-        $vendingMachine->receiveCoin($coins);
-        $vendingMachine->selectMenu($menu);
-        $change = $vendingMachine->returnChange();
-        return $change->toString();
+        $useCase = new BuyDrinkUseCase;
+        return $useCase->execute($coins, $menu, $vendingMachineCoins);
     }
 }
